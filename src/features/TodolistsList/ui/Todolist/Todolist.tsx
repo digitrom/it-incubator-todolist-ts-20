@@ -13,24 +13,27 @@ type PropsType = {
     todolist: TodolistDomainType;
     tasks: TaskType[];
     changeFilter: (value: FilterValuesType, todolistId: string) => void;
-    addTask: (title: string, todolistId: string) => void;
     removeTodolist: (id: string) => void;
     changeTodolistTitle: (id: string, newTitle: string) => void;
 };
 
 export const Todolist = React.memo(function (props: PropsType) {
     const {fetchTasks} = useActions(tasksThunks);
+    const { addTask } = useActions(tasksThunks);
+
 
     useEffect(() => {
         fetchTasks(props.todolist.id);
     }, []);
 
-    const addTask = useCallback(
-        (title: string) => {
-            props.addTask(title, props.todolist.id);
-        },
-        [props.addTask, props.todolist.id],
-    );
+
+
+
+    const addTaskCB = useCallback(
+        (title: string)=> {
+        addTask({ title, todolistId:props.todolist.id });
+    }, [props.todolist.id]);
+
 
     const removeTodolist = () => {
         props.removeTodolist(props.todolist.id);
@@ -73,7 +76,7 @@ export const Todolist = React.memo(function (props: PropsType) {
                     <Delete/>
                 </IconButton>
             </h3>
-            <AddItemForm addItem={addTask} disabled={props.todolist.entityStatus === "loading"}/>
+            <AddItemForm addItem={addTaskCB} disabled={props.todolist.entityStatus === "loading"}/>
             <div>
                 {tasksForTodolist.map((t) => (
                     <Task
