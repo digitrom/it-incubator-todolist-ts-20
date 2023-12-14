@@ -15,7 +15,6 @@ export const FilterTasksButton = ({todolist}: Props) => {
 
     const changeTodolistFilterHandler= (filter: FilterValuesType) => {
         changeTodolistFilter({filter, id})
-
     }
 
     return (

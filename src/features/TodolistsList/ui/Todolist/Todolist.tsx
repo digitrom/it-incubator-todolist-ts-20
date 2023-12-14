@@ -8,6 +8,7 @@ import {useActions} from "common/hooks";
 import {AddItemForm, EditableSpan} from "common/components";
 import {FilterTasksButton} from "./FilterTaskButton/FilterTasksButton";
 import {Tasks} from "./Tasks/Tasks";
+import {TodolistTitle} from "./TodolistTitle/TodolistTitle";
 
 type Props = {
     todolist: TodolistDomainType;
@@ -15,42 +16,27 @@ type Props = {
 };
 
 
-export const Todolist = React.memo(function (props: Props) {
+export const Todolist = React.memo(function ({todolist, tasks}: Props) {
     const {fetchTasks, addTask} = useActions(tasksThunks);
-    const {changeTodolistTitle, removeTodolist} = useActions(todolistsThunks)
-
 
     useEffect(() => {
-        fetchTasks(props.todolist.id);
+        fetchTasks(todolist.id);
     }, []);
 
 
     const addTaskCB = useCallback(
-        (title: string)=> {
-        addTask({ title, todolistId:props.todolist.id });
-    }, [props.todolist.id]);
-
-
-    const removeTodolistHandler = () => {
-       removeTodolist(props.todolist.id);
-    };
-
-    const changeTodolistTitleHandler = useCallback(
         (title: string) => {
-            changeTodolistTitle({ id: props.todolist.id, title });
-        },
-        [props.todolist.id],
-    );
-
+           return  addTask({title, todolistId: todolist.id}).unwrap();
+        }, [todolist.id]);
 
 
     return (
         <div>
-
-            <AddItemForm addItem={addTaskCB} disabled={props.todolist.entityStatus === "loading"}/>
-            <Tasks todolist={props.todolist} tasks={props.tasks}/>
+            <TodolistTitle todolist={todolist}/>
+            <AddItemForm addItem={addTaskCB} disabled={todolist.entityStatus === "loading"}/>
+            <Tasks todolist={todolist} tasks={tasks}/>
             <div style={{paddingTop: "10px"}}>
-              <FilterTasksButton todolist={props.todolist}/>
+                <FilterTasksButton todolist={todolist}/>
             </div>
         </div>
     );
